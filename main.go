@@ -1,3 +1,20 @@
+// Golang Restful API
+//
+// This documentation describes example APIs found under https://github.com/duleitony/rest-api
+//
+//     Schemes: http
+//     BasePath: /v1
+//     Version: 1.0.0
+//     Contact: Lei Du <duleitony@gmail.com> https://duleitony.me
+//     Host: duleitony.me/swaggerui
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -5,11 +22,14 @@ import (
     "html"
     "encoding/json"
     "github.com/gorilla/mux"
+//    "github.com/rakyll/statik/fs"
+
     "log"
     "net/http"
+  //  _ "github.com/duleitony/rest-api/swaggerui"
 )
 
-// The person Type (more like an object)
+/*=========================The person Type====================================*/
 type Person struct {
     ID        string   `json:"id,omitempty"`
     Firstname string   `json:"firstname,omitempty"`
@@ -23,8 +43,8 @@ type Address struct {
 
 var people []Person
 
-// The functions 
-func Index(w http.ResponseWriter, r *http.Request) {
+ /*=========================functions=========================================*/
+ func Index(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Welcome to Tony's worl! You are %q", html.EscapeString(r.URL.Path))
 }
 
@@ -67,15 +87,23 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-// main function to boot up everything
+/*=========================main function======================================*/
 func main() {
     router := mux.NewRouter()
+
     people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
     people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
+
+    // swagger:route GET / index getUser
+  	// ---
+  	// Gets the index page.
+  	// responses:
+  	//   200: Hello World!
     router.HandleFunc("/", Index).Methods("GET")
+
     router.HandleFunc("/people", GetPeople).Methods("GET")
     router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
     router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
     router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
-    log.Fatal(http.ListenAndServe(":3001", router))
+    log.Fatal(http.ListenAndServe(":8080", router))
 }
